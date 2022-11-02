@@ -13,6 +13,8 @@ provider:
     REGION: ${self:provider.region}
     KEYEXAMPLE: ${env:KEYEXAMPLE}
     # AWS_BUSINESSTABLEID: ${self:service}-${self:provider.stage}-${self:provider.region}-businesses
+    TASK_TABLE:
+      Ref: taskTable
 
   lambdaHashingVersion: 20201221
   httpApi:
@@ -35,6 +37,12 @@ functions:
           parameters: 
             paths: 
               name: true
+  createTask:
+    handler: src/handler.createTask
+    events:
+      - httpApi:
+        path: /createTask
+        method: POST
 
 package:
   exclude:
@@ -45,3 +53,19 @@ plugins:
   - serverless-webpack
   - serverless-offline
   - serverless-dotenv-plugin
+
+resources:
+  Resources:
+    taskTable:
+      Type: AWS::DynamoDB::Table
+        Properties:
+        TableName: taskTable
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

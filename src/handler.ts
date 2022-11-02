@@ -1,7 +1,10 @@
 "use strict";
 
 import * as AWS from "aws-sdk";
-// const tableName = process.env.AWS_BUSINESSTABLEID;
+import { DynamoDB } from "aws-sdk";
+
+const db = new DynamoDB.DocumentClient()
+const taskTable = process.env.TASK_TABLE;
 
 const getRequest = async (event: any, context: any) => {
   // let data = JSON.parse(event.body)
